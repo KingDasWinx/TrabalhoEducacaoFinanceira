@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Matemática Divertida - 6º Ano</title>
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: #f0f2f5;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h1,
+      h2 {
+        color: #2c3e50;
+        text-align: center;
+      }
+
+      .tab-buttons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        justify-content: center;
+      }
+
+      .tab-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background-color: #3498db;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .tab-button:hover {
+        background-color: #2980b9;
+      }
+
+      .tab-button.active {
+        background-color: #2980b9;
+      }
+
+      .input-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #34495e;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        border: 2px solid #bdc3c7;
+        border-radius: 6px;
+        font-size: 16px;
+      }
+
+      button {
+        background-color: #2ecc71;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #27ae60;
+      }
+
+      .result {
+        margin-top: 15px;
+        padding: 15px;
+        background-color: #e8f6f3;
+        border-radius: 6px;
+        text-align: center;
+        font-size: 18px;
+        color: #16a085;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Matemática Divertida - 6º Ano</h1>
+
+      <div class="tab-buttons">
+        <button class="tab-button active" onclick="showTab('equation')">
+          Equação de 1º Grau
+        </button>
+        <button class="tab-button" onclick="showTab('fraction')">
+          Frações
+        </button>
+      </div>
+
+      <div id="equation" class="tab-content card active">
+        <h2>Resolva a Equação de 1º Grau</h2>
+        <div class="input-group">
+          <label>Digite a equação (exemplo: 2x + 3 = 7):</label>
+          <input type="text" id="equation-input" placeholder="2x + 3 = 7" />
+        </div>
+        <button onclick="solveEquation()">Resolver</button>
+        <div id="equation-result" class="result"></div>
+      </div>
+
+      <div id="fraction" class="tab-content card">
+        <h2>Calculadora de Frações</h2>
+        <div class="input-group">
+          <label>Primeira Fração (exemplo: 1/2):</label>
+          <input type="text" id="fraction1" placeholder="1/2" />
+        </div>
+        <div class="input-group">
+          <label>Operação (+, -, ×, ÷):</label>
+          <input type="text" id="operation" placeholder="+" />
+        </div>
+        <div class="input-group">
+          <label>Segunda Fração (exemplo: 3/4):</label>
+          <input type="text" id="fraction2" placeholder="3/4" />
+        </div>
+        <button onclick="calculateFractions()">Calcular</button>
+        <div id="fraction-result" class="result"></div>
+      </div>
+    </div>
+
+    <script>
+      function showTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll(".tab-content").forEach((tab) => {
+          tab.classList.remove("active");
+        });
+        document.querySelectorAll(".tab-button").forEach((button) => {
+          button.classList.remove("active");
+        });
+
+        // Show selected tab
+        document.getElementById(tabName).classList.add("active");
+        document
+          .querySelector(`button[onclick="showTab('${tabName}')"]`)
+          .classList.add("active");
+      }
+
+      function solveEquation() {
+        const equationStr = document.getElementById("equation-input").value;
+        const result = document.getElementById("equation-result");
+
+        try {
+          // Simplificar a equação para forma ax + b = c
+          let [leftSide, rightSide] = equationStr
+            .split("=")
+            .map((side) => side.trim());
+
+          // Extrair coeficientes
+          let a = 0;
+          let b = 0;
+          let c = parseFloat(rightSide);
+
+          // Processar lado esquerdo
+          let terms = leftSide.split("+").map((term) => term.trim());
+          terms.forEach((term) => {
+            if (term.includes("x")) {
+              a = term === "x" ? 1 : parseFloat(term.replace("x", ""));
+            } else {
+              b = parseFloat(term);
+            }
+          });
+
+          // Resolver para x
+          const x = (c - b) / a;
+
+          result.innerHTML = `x = ${x}`;
+        } catch (error) {
+          result.innerHTML = "Por favor, digite uma equação válida";
+        }
+      }
+
+      function calculateFractions() {
+        const fraction1 = document.getElementById("fraction1").value;
+        const fraction2 = document.getElementById("fraction2").value;
+        const operation = document.getElementById("operation").value;
+        const result = document.getElementById("fraction-result");
+
+        try {
+          const [num1, den1] = fraction1.split("/").map(Number);
+          const [num2, den2] = fraction2.split("/").map(Number);
+          let resultNum, resultDen;
+
+          switch (operation) {
+            case "+":
+              resultNum = num1 * den2 + num2 * den1;
+              resultDen = den1 * den2;
+              break;
+            case "-":
+              resultNum = num1 * den2 - num2 * den1;
+              resultDen = den1 * den2;
+              break;
+            case "×":
+            case "*":
+              resultNum = num1 * num2;
+              resultDen = den1 * den2;
+              break;
+            case "÷":
+            case "/":
+              resultNum = num1 * den2;
+              resultDen = den1 * num2;
+              break;
+            default:
+              throw new Error("Operação inválida");
+          }
+
+          // Simplificar a fração
+          const gcd = function (a, b) {
+            return b ? gcd(b, a % b) : a;
+          };
+          const divisor = Math.abs(gcd(resultNum, resultDen));
+          resultNum = resultNum / divisor;
+          resultDen = resultDen / divisor;
+
+          result.innerHTML = `${resultNum}/${resultDen}`;
+        } catch (error) {
+          result.innerHTML = "Por favor, digite frações válidas";
+        }
+      }
+    </script>
+  </body>
+</html>
